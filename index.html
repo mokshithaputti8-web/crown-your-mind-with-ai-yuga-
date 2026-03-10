@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YUGA — Crown Your Mind with AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e63946;
+    --red-dark: #c1121f;
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --off-white: #f8f8f6;
+    --sidebar-w: 260px;
+    --gray: #888;
+    --light-gray: #f0f0ee;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--off-white);
+    color: var(--black);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='800'%3E%3Ccircle cx='100' cy='100' r='40' fill='none' stroke='%23e6394612' stroke-width='1.5'/%3E%3Ccircle cx='700' cy='200' r='60' fill='none' stroke='%230a0a0a08' stroke-width='1'/%3E%3Crect x='200' y='300' width='80' height='80' fill='none' stroke='%23e6394610' stroke-width='1.5' transform='rotate(15 240 340)'/%3E%3Cline x1='0' y1='400' x2='800' y2='200' stroke='%230a0a0a05' stroke-width='1'/%3E%3Ccircle cx='400' cy='600' r='100' fill='none' stroke='%23e6394608' stroke-width='1'/%3E%3Cpolygon points='600,50 650,150 550,150' fill='none' stroke='%230a0a0a08' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='700' r='30' fill='none' stroke='%23e6394615' stroke-width='1'/%3E%3Crect x='650' y='500' width='100' height='100' fill='none' stroke='%23e6394608' stroke-width='1' transform='rotate(30 700 550)'/%3E%3Cpath d='M100 500 Q200 400 300 500 Q400 600 500 500' fill='none' stroke='%230a0a0a06' stroke-width='1.5'/%3E%3Ccircle cx='300' cy='150' r='20' fill='none' stroke='%23e6394618' stroke-width='1'/%3E%3Cline x1='500' y1='0' x2='500' y2='800' stroke='%230a0a0a04' stroke-width='1'/%3E%3Ccircle cx='750' cy='700' r='50' fill='none' stroke='%230a0a0a06' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 800px 800px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--black);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    border-right: 3px solid var(--red);
+  }
+
+  .sidebar-logo {
+    padding: 28px 20px 20px;
+    border-bottom: 1px solid #222;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .lotus-svg { width: 48px; height: 48px; flex-shrink: 0; filter: drop-shadow(0 0 10px #e6394688); }
+
+  .logo-text { display: flex; flex-direction: column; }
+
+  .logo-name {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: var(--white);
+    text-shadow: 0 0 20px #e6394644;
+    line-height: 1;
+  }
+
+  .logo-tagline { font-size: 9px; color: #777; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 3px; }
+
+  .nav-section { padding: 10px 0; border-bottom: 1px solid #1a1a1a; }
+
+  .nav-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--red); padding: 12px 20px 6px; font-weight: 600; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 20px;
+    color: #bbb;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13.5px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    border-left: 3px solid transparent;
+  }
+
+  .nav-item:hover { color: var(--white); background: #111; border-left-color: #333; }
+  .nav-item.active { color: var(--white); background: #111; border-left-color: var(--red); }
+  .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .sidebar-footer { margin-top: auto; padding: 20px; border-top: 1px solid #1a1a1a; font-size: 11px; color: #444; text-align: center; }
+
+  .main { margin-left: var(--sidebar-w); min-height: 100vh; position: relative; z-index: 1; }
+
+  .topbar {
+    height: 60px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 2px; color: #888; text-transform: uppercase; }
+  .topbar-actions { display: flex; gap: 10px; align-items: center; }
+
+  .btn-red {
+    background: var(--red);
+    color: var(--white);
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px #e6394633;
+  }
+
+  .btn-red:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 4px 14px #e6394644; }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--black);
+    border: 1.5px solid var(--black);
+    padding: 7px 18px;
+    border-radius: 4px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-outline:hover { background: var(--black); color: var(--white); }
+
+  .page { display: none; padding: 40px 36px; max-width: 1100px; }
+  .page.active { display: block; }
+
+  .page-header { margin-bottom: 36px; }
+  .page-badge { display: inline-block; font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--red); font-weight: 600; margin-bottom: 8px; }
+  .page-title { font-family: 'Cinzel', serif; font-size: 36px; font-weight: 900; line-height: 1.1; color: var(--black); }
+  .page-subtitle { font-size: 15px; color: #666; margin-top: 8px; font-weight: 300; line-height: 1.6; }
+  .divider { width: 48px; height: 3px; background: var(--red); margin: 16px 0; border-radius: 2px; }
+
+  .card {
+    background: var(--white);
+    border: 1.5px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 24px;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card:hover { border-color: var(--red); box-shadow: 0 6px 24px #e6394415; transform: translateY(-2px); }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--red);
+    transform: scaleX(0);
+    transition: transform 0.25s;
+    transform-origin: left;
+  }
+
+  .card:hover::before { transform: scaleX(1); }
+
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 28px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 28px; }
+
+  .hero {
+    background: var(--black);
+    border-radius: 12px;
+    padding: 52px 48px;
+    margin-bottom: 36px;
+    position: relative;
+    overflow: hidden;
+    color: var(--white);
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, #3b82f622 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge { display: inline-block; background: var(--red); color: var(--white); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 4px 12px; border-radius: 2px; font-weight: 700; margin-bottom: 20px; }
+
+  .hero h1 { font-family: 'Cinzel', serif; font-size: 52px; font-weight: 900; line-height: 1.05; margin-bottom: 16px; letter-spacing: -0.5px; }
+  .hero h1 span { color: var(--red); }
+  .hero p { font-size: 16px; color: #aaa; max-width: 520px; line-height: 1.7; font-weight: 300; margin-bottom: 28px; }
+  .hero-btns { display: flex; gap: 12px; }
+
+  .slider-container { background: var(--white); border: 1.5px solid #e8e8e8; border-radius: 8px; overflow: hidden; margin-bottom: 28px; }
+  .slider-track { display: flex; transition: transform 0.4s ease; }
+
+  .slide { min-width: 100%; padding: 36px 40px; display: flex; align-items: center; gap: 32px; }
+  .slide-content { flex: 1; }
+  .slide-num { font-family: 'Cinzel', serif; font-size: 72px; font-weight: 900; color: #f0f0ee; line-height: 1; user-select: none; }
+  .slide h3 { font-family: 'Cinzel', serif; font-size: 20px; margin-bottom: 8px; }
+  .slide p { font-size: 14px; color: #666; line-height: 1.6; }
+
+  .slider-controls { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid #f0f0f0; background: #fafaf8; }
+  .slider-btn { background: var(--red); color: var(--white); border: none; width: 32px; height: 32px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 700; transition: background 0.2s; }
+  .slider-btn:hover { background: var(--red-dark); }
+  .slider-dots { display: flex; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; transition: background 0.2s; cursor: pointer; }
+  .dot.active { background: var(--red); }
+
+  .stat-card { background: var(--white); border: 1.5px solid #e8e8e8; border-radius: 8px; padding: 22px 24px; text-align: center; }
+  .stat-num { font-family: 'Cinzel', serif; font-size: 36px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 6px; }
+  .stat-label { font-size: 12px; color: #888; letter-spacing: 1px; text-transform: uppercase; }
+
+  .login-wrap { display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 100px); }
+
+  .auth-box { background: var(--white); border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 44px 40px; width: 100%; max-width: 420px; box-shadow: 0 8px 40px rgba(0,0,0,0.08); }
+  .auth-logo { text-align: center; margin-bottom: 28px; }
+  .auth-logo .lotus-svg { width: 56px; height: 56px; }
+
+  .auth-tabs { display: flex; border: 1.5px solid #e0e0e0; border-radius: 6px; overflow: hidden; margin-bottom: 28px; }
+  .auth-tab { flex: 1; padding: 10px; border: none; background: transparent; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; color: #888; }
+  .auth-tab.active { background: var(--black); color: var(--white); }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 600; margin-bottom: 6px; }
+  .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #e0e0e0; border-radius: 5px; font-family: 'Outfit', sans-serif; font-size: 14px; background: var(--white); color: var(--black); transition: border-color 0.2s; outline: none; }
+  .form-input:focus { border-color: var(--red); }
+  .btn-full { width: 100%; padding: 12px; font-size: 13px; }
+
+  .news-toolbar { display: flex; gap: 12px; margin-bottom: 24px; align-items: center; flex-wrap: wrap; }
+  .search-box { flex: 1; min-width: 200px; display: flex; border: 1.5px solid #e0e0e0; border-radius: 5px; overflow: hidden; }
+  .search-box input { flex: 1; padding: 10px 14px; border: none; font-family: 'Outfit', sans-serif; font-size: 13px; outline: none; background: var(--white); }
+  .search-box button { padding: 10px 16px; background: var(--black); color: var(--white); border: none; cursor: pointer; font-size: 14px; }
+
+  .news-card { background: var(--white); border: 1.5px solid #e8e8e8; border-radius: 8px; padding: 22px; margin-bottom: 16px; transition: all 0.2s; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start; }
+  .news-card:hover { border-color: var(--red); box-shadow: 0 4px 16px #e6394418; }
+  .news-tag { display: inline-block; background: #fff0f0; color: var(--red); font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; margin-bottom: 8px; }
+  .news-card h3 { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+  .news-card p { font-size: 13px; color: #666; line-height: 1.6; }
+  .news-date { font-size: 11px; color: #bbb; white-space: nowrap; margin-top: 4px; }
+
+  .games-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+  .game-card { background: var(--white); border: 1.5px solid #e8e8e8; border-radius: 10px; padding: 28px 22px; text-align: center; cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; }
+  .game-card:hover { border-color: var(--red); box-shadow: 0 8px 30px #e6394420; transform: translateY(-3px); }
+  .game-icon { font-size: 40px; margin-bottom: 14px; }
+  .game-card h3 { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .game-card p { font-size: 12px; color: #888; line-height: 1.5; margin-bottom: 16px; }
+
+  .game-arena { display: none; background: var(--white); border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 30px; margin-bottom: 24px; }
+  .game-arena.active { display: block; }
+  .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0; }
+
+  .sort-bars { display: flex; align-items: flex-end; gap: 4px; height: 160px; padding: 0 10px; margin-bottom: 20px; background: #fafaf8; border-radius: 6px; border: 1px solid #eee; }
+  .bar { flex: 1; background: var(--black); border-radius: 3px 3px 0 0; transition: height 0.3s ease; }
+  .bar.comparing { background: var(--red); }
+  .bar.sorted { background: #22c55e; }
+
+  .quiz-q { font-size: 16px; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+  .quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .quiz-opt { padding: 12px 16px; border: 1.5px solid #e0e0e0; border-radius: 6px; background: var(--white); cursor: pointer; font-family: 'Outfit', sans-serif; font-size: 13px; text-align: left; transition: all 0.2s; color: var(--black); }
+  .quiz-opt:hover { border-color: var(--red); background: #fff0f0; }
+  .quiz-opt.correct { background: #f0fdf4; border-color: #22c55e; color: #15803d; }
+  .quiz-opt.wrong { background: #fff0f0; border-color: var(--red); color: var(--red); }
+
+  .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .mem-card { height: 70px; border: 1.5px solid #e0e0e0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; background: var(--off-white); transition: all 0.3s; user-select: none; }
+  .mem-card.flipped { background: var(--black); border-color: var(--black); }
+  .mem-card.matched { background: #f0fdf4; border-color: #22c55e; }
+  .mem-card.wrong-match { background: #fff0f0; border-color: var(--red); }
+
+  .chat-wrap { display: grid; grid-template-columns: 1fr 280px; gap: 20px; height: calc(100vh - 220px); min-height: 500px; }
+  .chat-box { background: var(--white); border: 1.5px solid #e0e0e0; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; }
+  .chat-header { padding: 16px 20px; background: var(--black); color: var(--white); display: flex; align-items: center; gap: 12px; }
+  .chat-status { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+
+  .msg { max-width: 78%; padding: 12px 16px; border-radius: 8px; font-size: 13.5px; line-height: 1.6; }
+  .msg.user { background: var(--black); color: var(--white); align-self: flex-end; border-bottom-right-radius: 2px; }
+  .msg.ai { background: #f5f5f3; color: var(--black); align-self: flex-start; border-bottom-left-radius: 2px; border-left: 3px solid var(--red); }
+  .msg-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; color: inherit; opacity: 0.6; }
+
+  .chat-input-row { display: flex; border-top: 1.5px solid #f0f0f0; background: #fafaf8; }
+  .chat-input { flex: 1; padding: 14px 18px; border: none; background: transparent; font-family: 'Outfit', sans-serif; font-size: 14px; outline: none; color: var(--black); resize: none; }
+  .chat-send { background: var(--red); color: var(--white); border: none; padding: 0 24px; cursor: pointer; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; transition: background 0.2s; }
+  .chat-send:hover { background: var(--red-dark); }
+
+  .chat-sidebar { display: flex; flex-direction: column; gap: 14px; }
+  .info-card { background: var(--white); border: 1.5px solid #e8e8e8; border-radius: 8px; padding: 18px; }
+  .info-card h4 { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase; color: var(--red); }
+
+  .queue-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: #fafaf8; border-radius: 4px; margin-bottom: 6px; font-size: 12px; border-left: 3px solid #ddd; }
+  .queue-item.priority-high { border-left-color: var(--red); }
+  .queue-item.priority-med { border-left-color: #f59e0b; }
+
+  .prompt-builder { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .section-title { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 8px; }
+  .section-title span { color: var(--red); }
+
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .tag { padding: 5px 12px; border: 1.5px solid #e0e0e0; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all 0.2s; font-weight: 500; color: #555; }
+  .tag:hover, .tag.selected { background: var(--red); color: var(--white); border-color: var(--red); }
+
+  .prompt-output { background: var(--black); color: #e0e0e0; border-radius: 8px; padding: 20px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.7; min-height: 180px; position: relative; white-space: pre-wrap; word-break: break-word; }
+  .prompt-cursor { display: inline-block; width: 8px; height: 15px; background: var(--red); vertical-align: middle; animation: blink 1s infinite; }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+  .select-field { width: 100%; padding: 10px 14px; border: 1.5px solid #e0e0e0; border-radius: 5px; font-family: 'Outfit', sans-serif; font-size: 13px; background: var(--white); color: var(--black); outline: none; margin-bottom: 12px; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%23888'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+
+  .saved-prompts { margin-top: 20px; }
+  .saved-prompt-item { background: var(--white); border: 1.5px solid #e8e8e8; border-radius: 6px; padding: 14px 16px; margin-bottom: 10px; font-size: 13px; color: #555; line-height: 1.5; cursor: pointer; transition: all 0.2s; position: relative; }
+  .saved-prompt-item:hover { border-color: var(--red); }
+  .prompt-rank { position: absolute; top: 8px; right: 10px; font-size: 10px; font-family: 'Cinzel', serif; font-weight: 700; color: var(--red); }
+
+  .typing-dots { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
+  .typing-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: typingBounce 1.2s infinite; }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typingBounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .page.active { animation: fadeIn 0.3s ease; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--black); color: var(--white); padding: 12px 22px; border-radius: 6px; font-size: 13px; font-weight: 500; border-left: 4px solid var(--red); z-index: 9999; opacity: 0; transform: translateY(10px); transition: all 0.3s; }
+  .toast.show { opacity: 1; transform: none; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal-box { background: var(--white); border-radius: 10px; padding: 36px; max-width: 520px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+
+  .provider-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 16px; border: 1.5px solid #e0e0e0; border-radius: 20px;
+    background: var(--white); font-family: 'Outfit', sans-serif; font-size: 12px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s; color: #555;
+  }
+  .provider-btn:hover { border-color: var(--red); color: var(--black); }
+  .provider-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
+  .provider-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  .modal-tab {
+    padding: 7px 14px; border: 1.5px solid #e0e0e0; border-radius: 5px;
+    background: transparent; font-family: 'Outfit', sans-serif; font-size: 12px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s; color: #888;
+  }
+  .modal-tab:hover { border-color: var(--red); color: var(--black); }
+  .modal-tab.active { background: var(--black); color: var(--white); border-color: var(--black); }
+
+  .modal-tab-content { display: none; }
+  .modal-tab-content.active { display: block; }
+
+  .key-status-badge {
+    font-size: 11px; padding: 3px 10px; border-radius: 10px;
+    background: #f5f5f3; color: #888; border: 1px solid #e0e0e0; font-weight: 600;
+  }
+  .key-status-badge.set { background: #f0fdf4; color: #15803d; border-color: #86efac; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <svg class="lotus-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="pDark" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#cc1a1a"/>
+          <stop offset="100%" stop-color="#7a0000"/>
+        </linearGradient>
+        <linearGradient id="pMid" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#e63030"/>
+          <stop offset="100%" stop-color="#a00000"/>
+        </linearGradient>
+        <linearGradient id="pLight" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ff8080"/>
+          <stop offset="100%" stop-color="#cc2020"/>
+        </linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="46" fill="#fdf0f0" stroke="#7a0000" stroke-width="4.5"/>
+      <path d="M50 65 C40 65 18 60 15 48 C13 38 22 30 32 35 C38 38 44 52 50 65Z" fill="url(#pDark)" stroke="#5a0000" stroke-width="0.8"/>
+      <path d="M50 65 C60 65 82 60 85 48 C87 38 78 30 68 35 C62 38 56 52 50 65Z" fill="url(#pDark)" stroke="#5a0000" stroke-width="0.8"/>
+      <path d="M50 63 C44 58 30 52 28 40 C26 30 34 24 42 29 C46 32 48 47 50 63Z" fill="url(#pMid)" stroke="#5a0000" stroke-width="0.8"/>
+      <path d="M50 63 C56 58 70 52 72 40 C74 30 66 24 58 29 C54 32 52 47 50 63Z" fill="url(#pMid)" stroke="#5a0000" stroke-width="0.8"/>
+      <path d="M50 62 C46 55 40 44 41 33 C42 24 48 20 50 22 C50 35 50 50 50 62Z" fill="url(#pLight)" stroke="#5a0000" stroke-width="0.8"/>
+      <path d="M50 62 C54 55 60 44 59 33 C58 24 52 20 50 22 C50 35 50 50 50 62Z" fill="url(#pLight)" stroke="#5a0000" stroke-width="0.8"/>
+      <path d="M50 62 C46 50 44 36 47 24 C48 17 52 17 53 24 C56 36 54 50 50 62Z" fill="#ff9999" stroke="#5a0000" stroke-width="0.8"/>
+      <path d="M46 65 C46 70 50 74 50 74 C50 74 54 70 54 65 C52 63 48 63 46 65Z" fill="url(#pDark)" stroke="#5a0000" stroke-width="0.8"/>
+    </svg>
+    <div class="logo-text">
+      <div class="logo-name">YUGA</div>
+      <div class="logo-tagline">Crown Your Mind with AI</div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Main</div>
+    <div class="nav-item active" onclick="navigate('home')">
+      <span class="nav-icon">⌂</span> Home
+    </div>
+    <div class="nav-item" onclick="navigate('login')">
+      <span class="nav-icon">◎</span> Login / Signup
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Explore</div>
+    <div class="nav-item" onclick="navigate('news')">
+      <span class="nav-icon">◈</span> News Feed
+    </div>
+    <div class="nav-item" onclick="navigate('games')">
+      <span class="nav-icon">◆</span> Logical Games
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">AI Tools</div>
+    <div class="nav-item" onclick="navigate('ai')">
+      <span class="nav-icon">✦</span> YUGA Assistant
+    </div>
+    <div class="nav-item" onclick="navigate('prompts')">
+      <span class="nav-icon">◉</span> Prompt Generator
+    </div>
+  </div>
+
+  <div class="sidebar-footer">YUGA v2.0 · ES6+ · DSA-Powered</div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Home</div>
+    <div class="topbar-actions">
+      <button class="btn-outline" onclick="navigate('login')">Sign In</button>
+      <button class="btn-red" onclick="navigate('ai')">Try YUGA ✦</button>
+    </div>
+  </div>
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-badge">✦ AI-Powered Learning</div>
+      <h1>Crown Your<br>Mind with <span>AI</span></h1>
+      <p>YUGA is your intelligent companion — combining AI conversation, curated knowledge, DSA-powered logic, and interactive challenges.</p>
+      <div class="hero-btns">
+        <button class="btn-red" onclick="navigate('ai')">Talk to YUGA ✦</button>
+        <button onclick="navigate('news')" style="background:transparent;color:white;border:1.5px solid #333;padding:8px 20px;border-radius:4px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;" onmouseover="this.style.background='#1a1a1a'" onmouseout="this.style.background='transparent'">Explore News</button>
+      </div>
+    </div>
+
+    <div class="slider-container">
+      <div style="overflow:hidden;">
+        <div class="slider-track" id="sliderTrack">
+          <div class="slide">
+            <div class="slide-num">01</div>
+            <div class="slide-content">
+              <h3>Merge Sort Powers News Ranking</h3>
+              <p>Articles are sorted by date and relevance using Merge Sort — O(n log n) efficiency ensuring the freshest content is always first.</p>
+            </div>
+          </div>
+          <div class="slide">
+            <div class="slide-num">02</div>
+            <div class="slide-content">
+              <h3>Binary Search for Instant Results</h3>
+              <p>News keyword search uses Binary Search + Hash Maps for O(1) average lookup across thousands of indexed articles.</p>
+            </div>
+          </div>
+          <div class="slide">
+            <div class="slide-num">03</div>
+            <div class="slide-content">
+              <h3>Priority Queue for YUGA Messages</h3>
+              <p>YUGA's message processor uses a max-heap priority queue — urgent queries are handled first, ensuring responsive AI interactions.</p>
+            </div>
+          </div>
+          <div class="slide">
+            <div class="slide-num">04</div>
+            <div class="slide-content">
+              <h3>AI-Powered Prompt Generation</h3>
+              <p>Build sophisticated AI prompts using curated components. Saved prompts are ranked with Bubble Sort by usage frequency.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slider-controls">
+        <button class="slider-btn" onclick="sliderPrev()">←</button>
+        <div class="slider-dots" id="sliderDots"></div>
+        <button class="slider-btn" onclick="sliderNext()">→</button>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="stat-card"><div class="stat-num">9</div><div class="stat-label">DSA Topics</div></div>
+      <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Logic Games</div></div>
+      <div class="stat-card"><div class="stat-num">∞</div><div class="stat-label">AI Conversations</div></div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card" onclick="navigate('news')" style="cursor:pointer">
+        <div style="font-size:24px;margin-bottom:12px">◈</div>
+        <h3 style="font-family:'Cinzel',serif;font-size:15px;margin-bottom:8px">News Feed</h3>
+        <p style="font-size:13px;color:#888;line-height:1.6">Merge-sorted articles on AI, tech, and science. Binary search for instant results.</p>
+      </div>
+      <div class="card" onclick="navigate('games')" style="cursor:pointer">
+        <div style="font-size:24px;margin-bottom:12px">◆</div>
+        <h3 style="font-family:'Cinzel',serif;font-size:15px;margin-bottom:8px">Logical Games</h3>
+        <p style="font-size:13px;color:#888;line-height:1.6">Sorting visualizer, DSA quiz, and memory challenge to sharpen your mind.</p>
+      </div>
+      <div class="card" onclick="navigate('prompts')" style="cursor:pointer">
+        <div style="font-size:24px;margin-bottom:12px">◉</div>
+        <h3 style="font-family:'Cinzel',serif;font-size:15px;margin-bottom:8px">Prompt Generator</h3>
+        <p style="font-size:13px;color:#888;line-height:1.6">Build, refine and save AI prompts. Sorted by effectiveness with Bubble Sort.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN PAGE -->
+  <div class="page" id="page-login">
+    <div class="login-wrap">
+      <div class="auth-box">
+        <div class="auth-logo">
+          <svg class="lotus-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="pDark2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#cc1a1a"/>
+                <stop offset="100%" stop-color="#7a0000"/>
+              </linearGradient>
+              <linearGradient id="pMid2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#e63030"/>
+                <stop offset="100%" stop-color="#a00000"/>
+              </linearGradient>
+              <linearGradient id="pLight2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ff8080"/>
+                <stop offset="100%" stop-color="#cc2020"/>
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="46" fill="#fdf0f0" stroke="#7a0000" stroke-width="4.5"/>
+            <path d="M50 65 C40 65 18 60 15 48 C13 38 22 30 32 35 C38 38 44 52 50 65Z" fill="url(#pDark2)" stroke="#5a0000" stroke-width="0.8"/>
+            <path d="M50 65 C60 65 82 60 85 48 C87 38 78 30 68 35 C62 38 56 52 50 65Z" fill="url(#pDark2)" stroke="#5a0000" stroke-width="0.8"/>
+            <path d="M50 63 C44 58 30 52 28 40 C26 30 34 24 42 29 C46 32 48 47 50 63Z" fill="url(#pMid2)" stroke="#5a0000" stroke-width="0.8"/>
+            <path d="M50 63 C56 58 70 52 72 40 C74 30 66 24 58 29 C54 32 52 47 50 63Z" fill="url(#pMid2)" stroke="#5a0000" stroke-width="0.8"/>
+            <path d="M50 62 C46 55 40 44 41 33 C42 24 48 20 50 22 C50 35 50 50 50 62Z" fill="url(#pLight2)" stroke="#5a0000" stroke-width="0.8"/>
+            <path d="M50 62 C54 55 60 44 59 33 C58 24 52 20 50 22 C50 35 50 50 50 62Z" fill="url(#pLight2)" stroke="#5a0000" stroke-width="0.8"/>
+            <path d="M50 62 C46 50 44 36 47 24 C48 17 52 17 53 24 C56 36 54 50 50 62Z" fill="#ff9999" stroke="#5a0000" stroke-width="0.8"/>
+            <path d="M46 65 C46 70 50 74 50 74 C50 74 54 70 54 65 C52 63 48 63 46 65Z" fill="url(#pDark2)" stroke="#5a0000" stroke-width="0.8"/>
+          </svg>
+          <div style="font-family:'Cinzel',serif;font-size:22px;font-weight:900;letter-spacing:3px;margin-top:8px">YUGA</div>
+          <div style="font-size:12px;color:#999;letter-spacing:1px">Crown Your Mind with AI</div>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Sign In</button>
+          <button class="auth-tab" id="signupTab" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+
+        <div id="loginForm">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" type="email" placeholder="you@example.com" id="loginEmail">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" placeholder="••••••••" id="loginPass">
+          </div>
+          <button class="btn-red btn-full" onclick="handleLogin()">Sign In →</button>
+          <div style="text-align:center;margin-top:14px;font-size:12px;color:#aaa">
+            Don't have an account? <span style="color:var(--red);cursor:pointer" onclick="switchTab('signup')">Sign Up</span>
+          </div>
+        </div>
+
+        <div id="signupForm" style="display:none">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input class="form-input" type="text" placeholder="Your Name" id="signupName">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" type="email" placeholder="you@example.com" id="signupEmail">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" placeholder="Min 8 characters" id="signupPass">
+          </div>
+          <button class="btn-red btn-full" onclick="handleSignup()">Create Account →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEWS PAGE -->
+  <div class="page" id="page-news">
+    <div class="page-header">
+      <div class="page-badge">◈ Merge-Sorted · Hash-Indexed</div>
+      <h1 class="page-title">News Feed</h1>
+      <div class="divider"></div>
+      <p class="page-subtitle">Articles sorted by date using Merge Sort. Search powered by Hash Map indexing.</p>
+    </div>
+    <div class="news-toolbar">
+      <div class="search-box">
+        <input type="text" placeholder="Search news by keyword..." id="newsSearch" oninput="searchNews()">
+        <button onclick="searchNews()">⌕</button>
+      </div>
+      <button class="btn-red" onclick="sortNews('date')">Sort by Date</button>
+      <button class="btn-outline" onclick="sortNews('relevance')">Sort by Relevance</button>
+    </div>
+    <div id="newsContainer"></div>
+  </div>
+
+  <!-- GAMES PAGE -->
+  <div class="page" id="page-games">
+    <div class="page-header">
+      <div class="page-badge">◆ DSA-Powered Logic</div>
+      <h1 class="page-title">Logical Games</h1>
+      <div class="divider"></div>
+      <p class="page-subtitle">Train your mind with algorithm visualizations and challenges.</p>
+    </div>
+
+    <div class="games-grid">
+      <div class="game-card" onclick="openGame('sort')">
+        <div class="game-icon">📊</div>
+        <h3>Sorting Visualizer</h3>
+        <p>Watch Bubble Sort in action. Step through array comparisons with live bar animations.</p>
+        <button class="btn-red">Play →</button>
+      </div>
+      <div class="game-card" onclick="openGame('quiz')">
+        <div class="game-icon">🧠</div>
+        <h3>DSA Quiz</h3>
+        <p>Test your knowledge of Data Structures & Algorithms with timed questions.</p>
+        <button class="btn-red">Play →</button>
+      </div>
+      <div class="game-card" onclick="openGame('memory')">
+        <div class="game-icon">🃏</div>
+        <h3>Memory Match</h3>
+        <p>Match pairs of DSA concepts and symbols. Uses Hash Map for O(1) state tracking.</p>
+        <button class="btn-red">Play →</button>
+      </div>
+    </div>
+
+    <div class="game-arena" id="game-sort">
+      <div class="game-header">
+        <h3 style="font-family:'Cinzel',serif">Bubble Sort Visualizer</h3>
+        <div style="display:flex;gap:10px">
+          <button class="btn-red" onclick="runBubbleSort()">Sort!</button>
+          <button class="btn-outline" onclick="resetSort()">Reset</button>
+          <button class="btn-outline" onclick="closeGame()">✕ Close</button>
+        </div>
+      </div>
+      <div class="sort-bars" id="sortBars"></div>
+      <div style="font-size:12px;color:#888;font-family:monospace;padding:8px 0" id="sortInfo">Click Sort to begin.</div>
+    </div>
+
+    <div class="game-arena" id="game-quiz">
+      <div class="game-header">
+        <h3 style="font-family:'Cinzel',serif">DSA Quiz</h3>
+        <div style="display:flex;gap:10px;align-items:center">
+          <span id="quizScore" style="font-size:13px;color:#888">Score: 0/0</span>
+          <button class="btn-outline" onclick="closeGame()">✕ Close</button>
+        </div>
+      </div>
+      <div id="quizContent"></div>
+    </div>
+
+    <div class="game-arena" id="game-memory">
+      <div class="game-header">
+        <h3 style="font-family:'Cinzel',serif">Memory Match</h3>
+        <div style="display:flex;gap:10px;align-items:center">
+          <span id="memMoves" style="font-size:13px;color:#888">Moves: 0</span>
+          <button class="btn-red" onclick="resetMemory()">New Game</button>
+          <button class="btn-outline" onclick="closeGame()">✕ Close</button>
+        </div>
+      </div>
+      <div class="memory-grid" id="memGrid"></div>
+    </div>
+  </div>
+
+  <!-- AI PAGE -->
+  <div class="page" id="page-ai">
+    <div class="page-header">
+      <div class="page-badge">✦ Multi-AI Brain Integration</div>
+      <h1 class="page-title">YUGA Assistant</h1>
+      <div class="divider"></div>
+    </div>
+
+    <div style="background:var(--white);border:1.5px solid #e0e0e0;border-radius:10px;padding:20px 24px;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+        <div>
+          <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:6px;color:var(--black)">🧠 Choose AI Brain</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;" id="providerBtns">
+            <button class="provider-btn active" data-provider="claude" onclick="selectProvider('claude')">
+              <span class="provider-dot" style="background:#f97316"></span> Claude
+            </button>
+            <button class="provider-btn" data-provider="gemini" onclick="selectProvider('gemini')">
+              <span class="provider-dot" style="background:#4285f4"></span> Gemini
+            </button>
+            <button class="provider-btn" data-provider="openai" onclick="selectProvider('openai')">
+              <span class="provider-dot" style="background:#10a37f"></span> GPT-4o
+            </button>
+            <button class="provider-btn" data-provider="mistral" onclick="selectProvider('mistral')">
+              <span class="provider-dot" style="background:#9b59b6"></span> Mistral
+            </button>
+            <button class="provider-btn" data-provider="cohere" onclick="selectProvider('cohere')">
+              <span class="provider-dot" style="background:#e63946"></span> Cohere
+            </button>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div id="providerStatusBadge" style="font-size:11px;padding:4px 12px;border-radius:20px;background:#fff3cd;color:#856404;border:1px solid #ffc107;font-weight:600;">⚠ No Key Set</div>
+          <button class="btn-red" style="font-size:11px;padding:7px 16px;" onclick="showApiModal()">🔑 Set API Key</button>
+        </div>
+      </div>
+      <div id="providerInfo" style="margin-top:14px;padding:12px 14px;background:#fafaf8;border-radius:6px;font-size:12px;color:#666;line-height:1.6;border-left:3px solid var(--red);">
+        <strong style="color:var(--black)">Claude (Anthropic)</strong> — Get your key at <a href="https://console.anthropic.com" target="_blank" style="color:var(--red)">console.anthropic.com</a>. Models: claude-sonnet-4-20250514 and more. Best for reasoning, coding, and long context.
+      </div>
+    </div>
+
+    <div class="chat-wrap">
+      <div class="chat-box">
+        <div class="chat-header">
+          <div class="chat-status"></div>
+          <div style="flex:1">
+            <div style="font-family:'Cinzel',serif;font-size:14px;letter-spacing:1px">YUGA</div>
+            <div style="font-size:10px;color:#888;letter-spacing:1px" id="chatProviderLabel">Powered by Claude · Demo Mode</div>
+          </div>
+          <div id="activeProviderBadge" style="font-size:10px;padding:3px 10px;border-radius:12px;background:#f97316;color:white;font-weight:700;letter-spacing:1px;">CLAUDE</div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="msg ai">
+            <div class="msg-label">YUGA</div>
+            Hello! I'm YUGA, your AI learning companion. Ask me anything about Data Structures, Algorithms, programming concepts, or explore ideas together. How can I help you today?
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <textarea class="chat-input" id="chatInput" rows="1" placeholder="Ask YUGA anything..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
+          <button class="chat-send" onclick="sendMessage()">SEND</button>
+        </div>
+      </div>
+
+      <div class="chat-sidebar">
+        <div class="info-card">
+          <h4>Priority Queue</h4>
+          <div id="queueDisplay">
+            <div class="queue-item priority-high"><span>🔴</span> High Priority</div>
+            <div class="queue-item priority-med"><span>🟡</span> Medium Priority</div>
+            <div class="queue-item"><span>⚪</span> Normal</div>
+          </div>
+          <div style="font-size:11px;color:#bbb;margin-top:8px">Message processing order</div>
+        </div>
+
+        <div class="info-card">
+          <h4>Quick Prompts</h4>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <button class="btn-red" style="font-size:11px;padding:7px 12px;text-align:left" onclick="quickPrompt('Explain Binary Search with an example')">Binary Search</button>
+            <button class="btn-red" style="font-size:11px;padding:7px 12px;text-align:left" onclick="quickPrompt('What is a Hash Map and how does it work?')">Hash Maps</button>
+            <button class="btn-red" style="font-size:11px;padding:7px 12px;text-align:left" onclick="quickPrompt('Explain time complexity and Big-O notation')">Big-O Notation</button>
+            <button class="btn-red" style="font-size:11px;padding:7px 12px;text-align:left" onclick="quickPrompt('Difference between stack and queue data structures')">Stack vs Queue</button>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h4>Session Stats</h4>
+          <div style="font-size:13px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between"><span style="color:#888">Messages</span> <span id="msgCount" style="font-weight:600">1</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#888">API Mode</span> <span id="apiMode" style="font-weight:600;color:var(--red)">Demo</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROMPTS PAGE -->
+  <div class="page" id="page-prompts">
+    <div class="page-header">
+      <div class="page-badge">◉ Bubble-Sorted by Usage</div>
+      <h1 class="page-title">Prompt Generator</h1>
+      <div class="divider"></div>
+      <p class="page-subtitle">Build structured AI prompts by selecting components. Saved prompts are ranked by usage frequency.</p>
+    </div>
+
+    <div class="prompt-builder">
+      <div>
+        <div class="section-title"><span>01</span> Select Role</div>
+        <select class="select-field" id="promptRole" onchange="buildPrompt()">
+          <option value="">Choose a role...</option>
+          <option>Expert Software Engineer</option>
+          <option>Data Science Researcher</option>
+          <option>Creative Writing Coach</option>
+          <option>Mathematics Tutor</option>
+          <option>UI/UX Design Specialist</option>
+          <option>Machine Learning Engineer</option>
+          <option>Career Advisor</option>
+        </select>
+
+        <div class="section-title"><span>02</span> Task Tags</div>
+        <div class="tag-cloud" id="tagCloud">
+          <div class="tag" onclick="toggleTag(this,'explain')">Explain</div>
+          <div class="tag" onclick="toggleTag(this,'step-by-step')">Step by step</div>
+          <div class="tag" onclick="toggleTag(this,'code example')">Code example</div>
+          <div class="tag" onclick="toggleTag(this,'compare')">Compare</div>
+          <div class="tag" onclick="toggleTag(this,'summarize')">Summarize</div>
+          <div class="tag" onclick="toggleTag(this,'debug')">Debug</div>
+          <div class="tag" onclick="toggleTag(this,'optimize')">Optimize</div>
+          <div class="tag" onclick="toggleTag(this,'creative')">Creative</div>
+          <div class="tag" onclick="toggleTag(this,'beginner-friendly')">Beginner-friendly</div>
+          <div class="tag" onclick="toggleTag(this,'advanced')">Advanced</div>
+        </div>
+
+        <div class="section-title"><span>03</span> Topic</div>
+        <input class="form-input" type="text" placeholder="e.g. Binary Search Trees in Java" id="promptTopic" oninput="buildPrompt()">
+
+        <div class="section-title" style="margin-top:16px"><span>04</span> Output Format</div>
+        <select class="select-field" id="promptFormat" onchange="buildPrompt()">
+          <option value="">Default</option>
+          <option>In bullet points</option>
+          <option>As a numbered list</option>
+          <option>With code snippets</option>
+          <option>With analogies</option>
+          <option>In a table format</option>
+        </select>
+
+        <div style="display:flex;gap:10px;margin-top:4px">
+          <button class="btn-red" style="flex:1" onclick="buildPrompt()">Generate ◉</button>
+          <button class="btn-outline" onclick="savePrompt()">Save</button>
+          <button class="btn-outline" onclick="copyPrompt()">Copy</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title"><span>Preview</span></div>
+        <div class="prompt-output" id="promptOutput"><span style="opacity:0.4">// Select options to generate your prompt...</span><span class="prompt-cursor"></span></div>
+
+        <div class="saved-prompts">
+          <div class="section-title" style="margin-top:20px"><span>Saved</span> Prompts <span style="font-size:11px;color:#aaa;font-family:'Outfit',sans-serif">(Bubble-sorted by usage)</span></div>
+          <div id="savedPromptsContainer">
+            <div style="font-size:13px;color:#bbb;padding:20px 0;text-align:center">No saved prompts yet. Build one above!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- API KEY MODAL -->
+<div class="modal-overlay" id="apiModal">
+  <div class="modal-box" style="max-width:520px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <h2 style="font-family:'Cinzel',serif;font-size:20px;">🔑 API Key Manager</h2>
+      <button onclick="document.getElementById('apiModal').classList.remove('show')" style="background:none;border:none;font-size:20px;cursor:pointer;color:#888;">✕</button>
+    </div>
+    <p style="font-size:12px;color:#999;margin-bottom:20px;line-height:1.6;">Keys are stored in memory only — never saved to disk or sent anywhere except the respective AI provider's API.</p>
+
+    <div style="display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="modal-tab active" data-tab="claude" onclick="switchModalTab('claude')">🟠 Claude</button>
+      <button class="modal-tab" data-tab="gemini" onclick="switchModalTab('gemini')">🔵 Gemini</button>
+      <button class="modal-tab" data-tab="openai" onclick="switchModalTab('openai')">🟢 GPT-4o</button>
+      <button class="modal-tab" data-tab="mistral" onclick="switchModalTab('mistral')">🟣 Mistral</button>
+      <button class="modal-tab" data-tab="cohere" onclick="switchModalTab('cohere')">🔴 Cohere</button>
+    </div>
+
+    <div class="modal-tab-content active" id="tab-claude">
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;padding:12px;margin-bottom:14px;font-size:12px;color:#9a3412;line-height:1.6;">
+        Get your key at <a href="https://console.anthropic.com/keys" target="_blank" style="color:#c2410c;font-weight:600;">console.anthropic.com/keys</a><br>
+        Prefix: <code>sk-ant-...</code> · Model: <strong>claude-sonnet-4-20250514</strong>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Anthropic API Key</label>
+        <div style="position:relative;">
+          <input class="form-input" type="password" placeholder="sk-ant-api03-..." id="key-claude" style="padding-right:90px;">
+          <span id="status-claude" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#bbb;">NOT SET</span>
+        </div>
+      </div>
+      <button class="btn-red btn-full" onclick="saveProviderKey('claude')">Save Claude Key ✓</button>
+    </div>
+
+    <div class="modal-tab-content" id="tab-gemini">
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:12px;margin-bottom:14px;font-size:12px;color:#1e40af;line-height:1.6;">
+        Get your key at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#1d4ed8;font-weight:600;">aistudio.google.com/apikey</a><br>
+        Model: <strong>gemini-1.5-pro</strong>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Google AI API Key</label>
+        <div style="position:relative;">
+          <input class="form-input" type="password" placeholder="AIzaSy..." id="key-gemini" style="padding-right:90px;">
+          <span id="status-gemini" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#bbb;">NOT SET</span>
+        </div>
+      </div>
+      <button class="btn-red btn-full" onclick="saveProviderKey('gemini')">Save Gemini Key ✓</button>
+    </div>
+
+    <div class="modal-tab-content" id="tab-openai">
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:12px;margin-bottom:14px;font-size:12px;color:#166534;line-height:1.6;">
+        Get your key at <a href="https://platform.openai.com/api-keys" target="_blank" style="color:#15803d;font-weight:600;">platform.openai.com/api-keys</a><br>
+        Model: <strong>gpt-4o</strong>
+      </div>
+      <div class="form-group">
+        <label class="form-label">OpenAI API Key</label>
+        <div style="position:relative;">
+          <input class="form-input" type="password" placeholder="sk-proj-..." id="key-openai" style="padding-right:90px;">
+          <span id="status-openai" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#bbb;">NOT SET</span>
+        </div>
+      </div>
+      <button class="btn-red btn-full" onclick="saveProviderKey('openai')">Save GPT-4o Key ✓</button>
+    </div>
+
+    <div class="modal-tab-content" id="tab-mistral">
+      <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:6px;padding:12px;margin-bottom:14px;font-size:12px;color:#6b21a8;line-height:1.6;">
+        Get your key at <a href="https://console.mistral.ai/api-keys" target="_blank" style="color:#7e22ce;font-weight:600;">console.mistral.ai/api-keys</a><br>
+        Model: <strong>mistral-large-latest</strong>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mistral API Key</label>
+        <div style="position:relative;">
+          <input class="form-input" type="password" placeholder="Your Mistral key..." id="key-mistral" style="padding-right:90px;">
+          <span id="status-mistral" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#bbb;">NOT SET</span>
+        </div>
+      </div>
+      <button class="btn-red btn-full" onclick="saveProviderKey('mistral')">Save Mistral Key ✓</button>
+    </div>
+
+    <div class="modal-tab-content" id="tab-cohere">
+      <div style="background:#fff0f0;border:1px solid #fecaca;border-radius:6px;padding:12px;margin-bottom:14px;font-size:12px;color:#991b1b;line-height:1.6;">
+        Get your key at <a href="https://dashboard.cohere.com/api-keys" target="_blank" style="color:#b91c1c;font-weight:600;">dashboard.cohere.com/api-keys</a><br>
+        Model: <strong>command-r-plus</strong>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cohere API Key</label>
+        <div style="position:relative;">
+          <input class="form-input" type="password" placeholder="Your Cohere key..." id="key-cohere" style="padding-right:90px;">
+          <span id="status-cohere" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#bbb;">NOT SET</span>
+        </div>
+      </div>
+      <button class="btn-red btn-full" onclick="saveProviderKey('cohere')">Save Cohere Key ✓</button>
+    </div>
+
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid #f0f0f0;">
+      <div style="font-size:11px;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">All Providers Status</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="allKeysStatus">
+        <span class="key-status-badge" id="badge-claude">🟠 Claude: ✗</span>
+        <span class="key-status-badge" id="badge-gemini">🔵 Gemini: ✗</span>
+        <span class="key-status-badge" id="badge-openai">🟢 GPT-4o: ✗</span>
+        <span class="key-status-badge" id="badge-mistral">🟣 Mistral: ✗</span>
+        <span class="key-status-badge" id="badge-cohere">🔴 Cohere: ✗</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== TOAST =====
+function showToast(msg, duration = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ===== NAVIGATION =====
+const pages = ['home','login','news','games','ai','prompts'];
+const pageTitles = { home:'Home', login:'Login / Signup', news:'News Feed', games:'Logical Games', ai:'YUGA Assistant', prompts:'Prompt Generator' };
+
+function navigate(id) {
+  pages.forEach(p => document.getElementById('page-'+p).classList.toggle('active', p === id));
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.remove('active');
+    if(el.getAttribute('onclick') && el.getAttribute('onclick').includes("'"+id+"'")) el.classList.add('active');
+  });
+  document.getElementById('topbar-title').textContent = pageTitles[id] || id;
+  if(id === 'news') renderNews();
+}
+
+// ===== DOUBLY LINKED LIST (Slider) =====
+class DLLNode { constructor(v) { this.val = v; this.prev = null; this.next = null; } }
+class DoublyLinkedList {
+  constructor(n) {
+    this.head = null; this.tail = null; this.curr = null; this.size = n;
+    let prev = null;
+    for(let i = 0; i < n; i++) {
+      const node = new DLLNode(i);
+      if(!this.head) { this.head = node; this.curr = node; }
+      if(prev) { prev.next = node; node.prev = prev; }
+      this.tail = node;
+      prev = node;
+    }
+  }
+  forward() { if(this.curr.next) this.curr = this.curr.next; else this.curr = this.head; return this.curr.val; }
+  backward() { if(this.curr.prev) this.curr = this.curr.prev; else this.curr = this.tail; return this.curr.val; }
+  current() { return this.curr.val; }
+}
+const dll = new DoublyLinkedList(4);
+
+function initSlider() {
+  const dotsEl = document.getElementById('sliderDots');
+  dotsEl.innerHTML = '';
+  for(let i = 0; i < 4; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goToSlide(i);
+    dotsEl.appendChild(d);
+  }
+}
+function updateSlider(idx) {
+  document.getElementById('sliderTrack').style.transform = `translateX(-${idx * 100}%)`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+function sliderNext() { updateSlider(dll.forward()); }
+function sliderPrev() { updateSlider(dll.backward()); }
+function goToSlide(i) { while(dll.current() !== i) dll.forward(); updateSlider(i); }
+initSlider();
+
+// ===== MERGE SORT (News) =====
+const newsData = [
+  { id:1, title:"AI Surpasses Human Performance in Protein Folding", tag:"AI Research", excerpt:"Researchers have achieved a new milestone in structural biology using transformer-based models.", date:"2026-03-08", score:95 },
+  { id:2, title:"JavaScript 2026: What's New in ES2026", tag:"Web Dev", excerpt:"The latest ECMAScript standard brings pattern matching, temporal API fixes, and immutable records.", date:"2026-03-07", score:88 },
+  { id:3, title:"Quantum Computing Reaches 1000-Qubit Milestone", tag:"Quantum", excerpt:"IBM announces breakthrough in error correction enabling practical quantum computations.", date:"2026-03-06", score:92 },
+  { id:4, title:"The Rise of Edge AI: Running Models Locally", tag:"AI Tools", excerpt:"New hardware chips enable full LLM inference on mobile devices without cloud dependency.", date:"2026-03-05", score:78 },
+  { id:5, title:"DSA Fundamentals Still Matter in the Age of AI", tag:"Education", excerpt:"Industry experts argue that understanding algorithms remains essential even as AI automates code.", date:"2026-03-04", score:85 },
+  { id:6, title:"Open Source Models Match GPT-4 Performance", tag:"AI Research", excerpt:"Community-trained models now rival proprietary systems on key benchmarks.", date:"2026-03-03", score:90 },
+];
+
+const newsIndex = {};
+newsData.forEach(a => {
+  const words = (a.title + ' ' + a.tag + ' ' + a.excerpt).toLowerCase().split(/\s+/);
+  words.forEach(w => { if(!newsIndex[w]) newsIndex[w] = []; if(!newsIndex[w].includes(a.id)) newsIndex[w].push(a.id); });
+});
+
+function mergeSort(arr, key) {
+  if(arr.length <= 1) return arr;
+  const mid = Math.floor(arr.length / 2);
+  return merge(mergeSort(arr.slice(0, mid), key), mergeSort(arr.slice(mid), key), key);
+}
+function merge(L, R, key) {
+  const res = []; let i = 0, j = 0;
+  while(i < L.length && j < R.length) {
+    if(L[i][key] >= R[j][key]) res.push(L[i++]); else res.push(R[j++]);
+  }
+  return [...res, ...L.slice(i), ...R.slice(j)];
+}
+
+function sortNews(by) {
+  const sorted = mergeSort([...newsData], by === 'date' ? 'date' : 'score');
+  renderNews(sorted);
+  showToast(`Sorted by ${by} using Merge Sort — O(n log n)`);
+}
+function searchNews() {
+  const q = document.getElementById('newsSearch').value.toLowerCase().trim();
+  if(!q) { renderNews(newsData); return; }
+  const words = q.split(/\s+/);
+  const hits = new Set();
+  words.forEach(w => Object.keys(newsIndex).filter(k => k.includes(w)).forEach(k => newsIndex[k].forEach(id => hits.add(id))));
+  renderNews(newsData.filter(a => hits.has(a.id)));
+}
+function renderNews(data = newsData) {
+  const c = document.getElementById('newsContainer');
+  if(!data.length) { c.innerHTML = '<div style="text-align:center;padding:40px;color:#bbb">No articles found.</div>'; return; }
+  c.innerHTML = data.map(a => `
+    <div class="news-card">
+      <div><div class="news-tag">${a.tag}</div><h3>${a.title}</h3><p>${a.excerpt}</p></div>
+      <div style="text-align:right"><div class="news-date">${a.date}</div><div style="font-size:11px;color:var(--red);font-weight:700;margin-top:4px">Score: ${a.score}</div></div>
+    </div>`).join('');
+}
+
+// ===== LOGIN =====
+function switchTab(tab) {
+  document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+  document.getElementById('signupTab').classList.toggle('active', tab === 'signup');
+  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
+}
+function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  if(!email || !pass) { showToast('Please fill in all fields.'); return; }
+  showToast(`Welcome back! Signed in as ${email}`);
+  setTimeout(() => navigate('home'), 1000);
+}
+function handleSignup() {
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const pass = document.getElementById('signupPass').value;
+  if(!name || !email || !pass) { showToast('Please fill in all fields.'); return; }
+  if(pass.length < 8) { showToast('Password must be at least 8 characters.'); return; }
+  showToast(`Account created! Welcome, ${name}!`);
+  setTimeout(() => navigate('home'), 1000);
+}
+
+// ===== BUBBLE SORT VISUALIZER =====
+let sortArr = [], sortRunning = false;
+function initSort() {
+  sortArr = Array.from({length:14}, () => Math.floor(Math.random() * 90) + 10);
+  renderBars(sortArr);
+  document.getElementById('sortInfo').textContent = `Array: [${sortArr.join(', ')}]`;
+}
+function renderBars(arr, comparing = [], sorted = []) {
+  const container = document.getElementById('sortBars');
+  const max = Math.max(...arr);
+  container.innerHTML = arr.map((v, i) => {
+    let cls = 'bar';
+    if(comparing.includes(i)) cls += ' comparing';
+    else if(sorted.includes(i)) cls += ' sorted';
+    return `<div class="${cls}" style="height:${(v / max) * 140}px" title="${v}"></div>`;
+  }).join('');
+}
+function resetSort() { sortRunning = false; initSort(); }
+async function runBubbleSort() {
+  if(sortRunning) return;
+  sortRunning = true;
+  const arr = [...sortArr];
+  const n = arr.length;
+  const sorted = [];
+  for(let i = 0; i < n - 1; i++) {
+    for(let j = 0; j < n - i - 1; j++) {
+      if(!sortRunning) return;
+      renderBars(arr, [j, j+1], sorted);
+      document.getElementById('sortInfo').textContent = `Comparing arr[${j}]=${arr[j]} and arr[${j+1}]=${arr[j+1]}`;
+      await sleep(180);
+      if(arr[j] > arr[j+1]) [arr[j], arr[j+1]] = [arr[j+1], arr[j]];
+    }
+    sorted.push(n - 1 - i);
+  }
+  sorted.push(0);
+  renderBars(arr, [], sorted);
+  document.getElementById('sortInfo').textContent = `✓ Sorted! Array: [${arr.join(', ')}]`;
+  sortRunning = false;
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ===== DSA QUIZ =====
+const quizQuestions = [
+  { q:"What is the time complexity of Binary Search?", opts:["O(n)","O(log n)","O(n²)","O(1)"], ans:1 },
+  { q:"Which data structure uses LIFO (Last In, First Out)?", opts:["Queue","Array","Stack","Linked List"], ans:2 },
+  { q:"What is the best case time complexity of Bubble Sort?", opts:["O(n²)","O(n log n)","O(n)","O(1)"], ans:2 },
+  { q:"A Hash Map provides average case lookup in:", opts:["O(n)","O(log n)","O(n²)","O(1)"], ans:3 },
+  { q:"Which traversal visits nodes Left → Root → Right?", opts:["Preorder","Inorder","Postorder","BFS"], ans:1 },
+  { q:"Merge Sort has what time complexity?", opts:["O(n²)","O(n)","O(n log n)","O(log n)"], ans:2 },
+  { q:"A Priority Queue is typically implemented with a:", opts:["Stack","Array","Heap","Linked List"], ans:2 },
+];
+let qIdx = 0, qScore = 0;
+function startQuiz() { qIdx = 0; qScore = 0; renderQuestion(); }
+function renderQuestion() {
+  if(qIdx >= quizQuestions.length) {
+    document.getElementById('quizContent').innerHTML = `
+      <div style="text-align:center;padding:30px">
+        <div style="font-size:48px;margin-bottom:16px">${qScore >= 5 ? '🏆' : qScore >= 3 ? '✨' : '📚'}</div>
+        <h3 style="font-family:'Cinzel',serif;font-size:22px;margin-bottom:10px">Quiz Complete!</h3>
+        <p style="font-size:16px;color:#666;margin-bottom:24px">Score: <strong style="color:var(--red)">${qScore}/${quizQuestions.length}</strong></p>
+        <button class="btn-red" onclick="startQuiz()">Play Again</button>
+      </div>`;
+    return;
+  }
+  const q = quizQuestions[qIdx];
+  document.getElementById('quizScore').textContent = `Score: ${qScore}/${quizQuestions.length}`;
+  document.getElementById('quizContent').innerHTML = `
+    <div style="background:#fafaf8;border-radius:6px;padding:16px;margin-bottom:20px">
+      <div style="font-size:11px;color:#bbb;letter-spacing:1px;margin-bottom:8px">QUESTION ${qIdx+1} OF ${quizQuestions.length}</div>
+      <div class="quiz-q">${q.q}</div>
+    </div>
+    <div class="quiz-opts">
+      ${q.opts.map((o, i) => `<button class="quiz-opt" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+    </div>`;
+}
+function answerQuiz(chosen) {
+  const q = quizQuestions[qIdx];
+  document.querySelectorAll('.quiz-opt').forEach((b, i) => {
+    b.disabled = true;
+    if(i === q.ans) b.classList.add('correct');
+    else if(i === chosen && chosen !== q.ans) b.classList.add('wrong');
+  });
+  if(chosen === q.ans) qScore++;
+  document.getElementById('quizScore').textContent = `Score: ${qScore}/${quizQuestions.length}`;
+  setTimeout(() => { qIdx++; renderQuestion(); }, 900);
+}
+
+// ===== MEMORY GAME =====
+const memEmojis = ['🌊','⚡','🔴','🌿','🎯','🔷','⭐','🎲'];
+let memCards = [], memFlipped = [], memMatched = new Set(), memMoveCount = 0;
+function initMemory() {
+  memCards = [...memEmojis, ...memEmojis].sort(() => Math.random() - 0.5);
+  memFlipped = []; memMatched = new Set(); memMoveCount = 0;
+  document.getElementById('memMoves').textContent = 'Moves: 0';
+  renderMemory();
+}
+function resetMemory() { initMemory(); }
+function renderMemory() {
+  document.getElementById('memGrid').innerHTML = memCards.map((e, i) => {
+    const matched = memMatched.has(i);
+    const flipped = memFlipped.includes(i);
+    return `<div class="mem-card ${matched ? 'matched' : flipped ? 'flipped' : ''}" onclick="flipCard(${i})">${matched || flipped ? e : ''}</div>`;
+  }).join('');
+}
+function flipCard(i) {
+  if(memFlipped.length >= 2 || memFlipped.includes(i) || memMatched.has(i)) return;
+  memFlipped.push(i);
+  renderMemory();
+  if(memFlipped.length === 2) {
+    memMoveCount++;
+    document.getElementById('memMoves').textContent = `Moves: ${memMoveCount}`;
+    const [a, b] = memFlipped;
+    if(memCards[a] === memCards[b]) {
+      memMatched.add(a); memMatched.add(b); memFlipped = [];
+      renderMemory();
+      if(memMatched.size === memCards.length) setTimeout(() => showToast(`🏆 You matched all pairs in ${memMoveCount} moves!`), 300);
+    } else {
+      setTimeout(() => { memFlipped = []; renderMemory(); }, 700);
+    }
+  }
+}
+function openGame(id) {
+  document.querySelectorAll('.game-arena').forEach(g => g.classList.remove('active'));
+  const arena = document.getElementById('game-' + id);
+  arena.classList.add('active');
+  if(id === 'sort') initSort();
+  if(id === 'quiz') startQuiz();
+  if(id === 'memory') initMemory();
+  arena.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+function closeGame() {
+  document.querySelectorAll('.game-arena').forEach(g => g.classList.remove('active'));
+  sortRunning = false;
+}
+
+// ===== MAX-HEAP PRIORITY QUEUE =====
+class MaxHeap {
+  constructor() { this.heap = []; }
+  push(item) {
+    this.heap.push(item);
+    let i = this.heap.length - 1;
+    while(i > 0) {
+      const p = Math.floor((i - 1) / 2);
+      if(this.heap[p].priority >= this.heap[i].priority) break;
+      [this.heap[p], this.heap[i]] = [this.heap[i], this.heap[p]];
+      i = p;
+    }
+  }
+  pop() {
+    if(!this.heap.length) return null;
+    const top = this.heap[0];
+    const last = this.heap.pop();
+    if(this.heap.length) { this.heap[0] = last; this._heapifyDown(0); }
+    return top;
+  }
+  _heapifyDown(i) {
+    const n = this.heap.length;
+    while(true) {
+      let largest = i, l = 2*i+1, r = 2*i+2;
+      if(l < n && this.heap[l].priority > this.heap[largest].priority) largest = l;
+      if(r < n && this.heap[r].priority > this.heap[largest].priority) largest = r;
+      if(largest === i) break;
+      [this.heap[i], this.heap[largest]] = [this.heap[largest], this.heap[i]];
+      i = largest;
+    }
+  }
+}
+const msgQueue = new MaxHeap();
+let msgCount = 1;
+
+// ===== MULTI-PROVIDER AI =====
+const apiKeys = { claude: null, gemini: null, openai: null, mistral: null, cohere: null };
+let activeProvider = 'claude';
+const providerColors = { claude:'#f97316', gemini:'#4285f4', openai:'#10a37f', mistral:'#9b59b6', cohere:'#e63946' };
+const providerLabels = { claude:'CLAUDE', gemini:'GEMINI', openai:'GPT-4O', mistral:'MISTRAL', cohere:'COHERE' };
+const providerInfoText = {
+  claude: '<strong style="color:var(--black)">Claude (Anthropic)</strong> — Get your key at <a href="https://console.anthropic.com/keys" target="_blank" style="color:var(--red)">console.anthropic.com</a>. Best for reasoning, coding, and long context.',
+  gemini: '<strong style="color:var(--black)">Gemini (Google)</strong> — Get your key at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--red)">aistudio.google.com</a>. Best for multimodal tasks.',
+  openai: '<strong style="color:var(--black)">GPT-4o (OpenAI)</strong> — Get your key at <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--red)">platform.openai.com</a>. Best for general-purpose tasks.',
+  mistral: '<strong style="color:var(--black)">Mistral AI</strong> — Get your key at <a href="https://console.mistral.ai/api-keys" target="_blank" style="color:var(--red)">console.mistral.ai</a>. Fast European-built AI.',
+  cohere: '<strong style="color:var(--black)">Cohere</strong> — Get your key at <a href="https://dashboard.cohere.com/api-keys" target="_blank" style="color:var(--red)">dashboard.cohere.com</a>. Best for enterprise search.',
+};
+
+function selectProvider(p) {
+  activeProvider = p;
+  document.querySelectorAll('.provider-btn').forEach(b => b.classList.toggle('active', b.dataset.provider === p));
+  const color = providerColors[p];
+  document.getElementById('activeProviderBadge').textContent = providerLabels[p];
+  document.getElementById('activeProviderBadge').style.background = color;
+  document.getElementById('providerInfo').innerHTML = providerInfoText[p];
+  const hasKey = !!apiKeys[p];
+  document.getElementById('chatProviderLabel').textContent = `Powered by ${providerLabels[p]} · ${hasKey ? 'Live API' : 'Demo Mode'}`;
+  document.getElementById('providerStatusBadge').innerHTML = hasKey
+    ? `<span style="color:#15803d;background:#f0fdf4;padding:4px 12px;border-radius:20px;border:1px solid #86efac;font-size:11px;font-weight:700;">✓ Key Set</span>`
+    : `<span style="background:#fff3cd;color:#856404;padding:4px 12px;border-radius:20px;border:1px solid #ffc107;font-size:11px;font-weight:700;">⚠ No Key Set</span>`;
+  document.getElementById('apiMode').textContent = hasKey ? providerLabels[p] + ' Live' : 'Demo';
+  document.getElementById('apiMode').style.color = hasKey ? '#22c55e' : 'var(--red)';
+}
+function showApiModal() { document.getElementById('apiModal').classList.add('show'); switchModalTab(activeProvider); }
+function switchModalTab(tab) {
+  document.querySelectorAll('.modal-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tab));
+}
+function saveProviderKey(provider) {
+  const val = document.getElementById('key-' + provider).value.trim();
+  if(!val) { showToast('Please enter a valid API key.'); return; }
+  apiKeys[provider] = val;
+  document.getElementById('status-' + provider).textContent = '✓ SET';
+  document.getElementById('status-' + provider).style.color = '#22c55e';
+  const badge = document.getElementById('badge-' + provider);
+  badge.textContent = badge.textContent.replace('✗', '✓');
+  badge.classList.add('set');
+  showToast(`✓ ${providerLabels[provider]} key saved!`);
+  if(provider === activeProvider) selectProvider(provider);
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  appendMsg('user', text);
+  msgCount++;
+  document.getElementById('msgCount').textContent = msgCount;
+  const priority = text.includes('?') ? 3 : text.length > 100 ? 2 : 1;
+  msgQueue.push({ text, priority });
+  const typingEl = appendTyping();
+  try {
+    let reply;
+    const key = apiKeys[activeProvider];
+    if(key) {
+      reply = await callProviderAPI(activeProvider, key, text);
+    } else {
+      await sleep(800);
+      reply = getDemoReply(text);
+    }
+    typingEl.remove();
+    appendMsg('ai', reply, activeProvider);
+    msgCount++;
+    document.getElementById('msgCount').textContent = msgCount;
+  } catch(e) {
+    typingEl.remove();
+    appendMsg('ai', `⚠ Error from ${providerLabels[activeProvider]}: ${e.message || 'Check your API key and try again.'}`, activeProvider);
+  }
+}
+
+async function callProviderAPI(provider, key, text) {
+  const systemPrompt = "You are YUGA, a friendly and knowledgeable AI learning assistant specializing in Data Structures, Algorithms, programming concepts, and Computer Science. Keep responses concise (2-4 paragraphs max) and educational.";
+  if(provider === 'claude') {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 512, system: systemPrompt, messages: [{ role:'user', content: text }] })
+    });
+    const d = await res.json();
+    if(d.error) throw new Error(d.error.message);
+    return d.content?.[0]?.text || 'No response received.';
+  }
+  if(provider === 'gemini') {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${key}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: systemPrompt + '\n\nUser: ' + text }] }] })
+    });
+    const d = await res.json();
+    if(d.error) throw new Error(d.error.message);
+    return d.candidates?.[0]?.content?.parts?.[0]?.text || 'No response received.';
+  }
+  if(provider === 'openai') {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 512, messages: [{ role:'system', content: systemPrompt }, { role:'user', content: text }] })
+    });
+    const d = await res.json();
+    if(d.error) throw new Error(d.error.message);
+    return d.choices?.[0]?.message?.content || 'No response received.';
+  }
+  if(provider === 'mistral') {
+    const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+      body: JSON.stringify({ model: 'mistral-large-latest', max_tokens: 512, messages: [{ role:'system', content: systemPrompt }, { role:'user', content: text }] })
+    });
+    const d = await res.json();
+    if(d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+    return d.choices?.[0]?.message?.content || 'No response received.';
+  }
+  if(provider === 'cohere') {
+    const res = await fetch('https://api.cohere.ai/v1/chat', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}`, 'X-Client-Name': 'YUGA' },
+      body: JSON.stringify({ model: 'command-r-plus', message: text, preamble: systemPrompt, max_tokens: 512 })
+    });
+    const d = await res.json();
+    if(d.message) throw new Error(d.message);
+    return d.text || 'No response received.';
+  }
+  throw new Error('Unknown provider.');
+}
+
+function getDemoReply(text) {
+  const t = text.toLowerCase();
+  if(t.includes('sort')) return "Sorting algorithms are fundamental! Merge Sort runs in O(n log n) and works by dividing the array in half recursively, then merging sorted halves. Bubble Sort is simpler at O(n²) but educational for learning swapping. For most production code, use Merge Sort or QuickSort.";
+  if(t.includes('binary') || t.includes('search')) return "Binary Search is a powerful O(log n) algorithm that works on sorted arrays. It repeatedly halves the search space: compare the middle element, and eliminate either the left or right half. A Hash Map gives O(1) average lookup by computing a hash of the key.";
+  if(t.includes('hash') || t.includes('map')) return "A Hash Map (or Hash Table) uses a hash function to map keys to indices in an array. Average case O(1) for insert, delete, and lookup. Collisions are handled via chaining (linked lists at each bucket) or open addressing. Java's HashMap and Python's dict are both hash maps.";
+  if(t.includes('queue') || t.includes('stack')) return "A Stack (LIFO) and Queue (FIFO) are both linear data structures. Stacks are used for function call management, undo operations, and DFS. Queues are used for BFS, scheduling, and buffering. A Priority Queue extends a queue by processing highest-priority elements first, typically implemented with a Heap.";
+  if(t.includes('big') || t.includes('complexity') || t.includes('o(')) return "Big-O notation describes the upper bound of an algorithm's time or space complexity as input grows. Common complexities: O(1) constant, O(log n) logarithmic, O(n) linear, O(n log n) linearithmic, O(n²) quadratic. Always aim for the most efficient complexity for your use case!";
+  if(t.includes('tree') || t.includes('bst')) return "A Binary Search Tree stores nodes where left child < parent < right child. Search, insert, delete are O(log n) average but O(n) worst case (unbalanced). Self-balancing trees like AVL and Red-Black guarantee O(log n) operations. BSTs are ideal for ordered data with frequent lookups.";
+  return `Great question about "${text}"! As your AI learning companion, I'm ready to help with DSA, programming, and more. For live AI responses powered by Claude, click "Set API Key" above. In demo mode, try asking about sorting, searching, hash maps, queues, trees, or Big-O notation!`;
+}
+
+function appendMsg(role, text, provider = null) {
+  const container = document.getElementById('chatMessages');
+  const el = document.createElement('div');
+  el.className = `msg ${role}`;
+  const label = role === 'user' ? 'You' : (provider ? providerLabels[provider] : 'YUGA');
+  const color = role === 'ai' && provider ? providerColors[provider] : null;
+  el.innerHTML = `<div class="msg-label" ${color ? `style="color:${color};opacity:1"` : ''}>${label}</div>${text}`;
+  if(role === 'ai' && provider && color) el.style.borderLeftColor = color;
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
+  return el;
+}
+function appendTyping() {
+  const container = document.getElementById('chatMessages');
+  const el = document.createElement('div');
+  el.className = 'msg ai';
+  el.innerHTML = `<div class="msg-label">YUGA</div><div class="typing-dots"><span></span><span></span><span></span></div>`;
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
+  return el;
+}
+function quickPrompt(text) { document.getElementById('chatInput').value = text; sendMessage(); }
+
+// ===== PROMPT GENERATOR (Bubble Sort) =====
+let selectedTags = [], savedPrompts = [];
+function toggleTag(el, tag) {
+  el.classList.toggle('selected');
+  if(el.classList.contains('selected')) selectedTags.push(tag);
+  else selectedTags = selectedTags.filter(t => t !== tag);
+  buildPrompt();
+}
+function buildPrompt() {
+  const role = document.getElementById('promptRole').value;
+  const topic = document.getElementById('promptTopic').value.trim();
+  const format = document.getElementById('promptFormat').value;
+  let prompt = '';
+  if(role) prompt += `You are a ${role}.\n\n`;
+  if(topic) {
+    prompt += `Your task is to `;
+    if(selectedTags.length) prompt += `${selectedTags.join(', ')} `;
+    prompt += `the following topic: "${topic}".`;
+  } else if(selectedTags.length) {
+    prompt += `Your approach should be to: ${selectedTags.join(', ')}.`;
+  }
+  if(format) prompt += `\n\nPlease format your response ${format}.`;
+  if(!prompt) {
+    document.getElementById('promptOutput').innerHTML = `<span style="opacity:0.4">// Select options to generate your prompt...</span><span class="prompt-cursor"></span>`;
+    return;
+  }
+  document.getElementById('promptOutput').textContent = prompt;
+}
+function savePrompt() {
+  const output = document.getElementById('promptOutput').textContent.trim();
+  if(!output || output.startsWith('//')) { showToast('Generate a prompt first!'); return; }
+  savedPrompts.push({ text: output, uses: 0 });
+  bubbleSortPrompts();
+  renderSavedPrompts();
+  showToast('Prompt saved! Bubble-sorted by usage.');
+}
+function bubbleSortPrompts() {
+  const arr = savedPrompts;
+  for(let i = 0; i < arr.length - 1; i++) {
+    for(let j = 0; j < arr.length - i - 1; j++) {
+      if(arr[j].uses < arr[j+1].uses) [arr[j], arr[j+1]] = [arr[j+1], arr[j]];
+    }
+  }
+}
+function renderSavedPrompts() {
+  const c = document.getElementById('savedPromptsContainer');
+  if(!savedPrompts.length) {
+    c.innerHTML = '<div style="font-size:13px;color:#bbb;padding:20px 0;text-align:center">No saved prompts yet. Build one above!</div>';
+    return;
+  }
+  c.innerHTML = savedPrompts.map((p, i) => `
+    <div class="saved-prompt-item" onclick="usePrompt(${i})">
+      <div class="prompt-rank">#${i+1} · ${p.uses} uses</div>
+      <div style="padding-right:60px;font-size:12px">${p.text.substring(0, 100)}${p.text.length > 100 ? '...' : ''}</div>
+    </div>`).join('');
+}
+function usePrompt(idx) {
+  savedPrompts[idx].uses++;
+  bubbleSortPrompts();
+  renderSavedPrompts();
+  document.getElementById('chatInput').value = savedPrompts[0].text;
+  navigate('ai');
+  showToast('Prompt loaded into YUGA chat!');
+}
+function copyPrompt() {
+  const text = document.getElementById('promptOutput').textContent.trim();
+  if(!text || text.startsWith('//')) { showToast('Generate a prompt first!'); return; }
+  navigator.clipboard.writeText(text).then(() => showToast('Prompt copied to clipboard!')).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('Prompt copied!');
+  });
+}
+
+renderNews();
+</script>
+</body>
+</html>
